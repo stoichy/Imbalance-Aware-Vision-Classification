@@ -1,0 +1,50 @@
+# Byte-compiled / Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Datasets, raw images & archives (never commit raw data)
+data/
+*.zip
+*.tar.gz
+*.tgz
+*.jpg
+*.jpeg
+*.bmp
+*.tiff
+
+# Model checkpoints, intermediate outputs & TensorBoard logs
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+/runs/
+/outputs/
+/checkpoints/
+/logs/
+
+# Submissions & transient outputs
+submissions/
+submission*.csv
+*kaggle_submission*.csv
+.env
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+

@@ -1,0 +1,20 @@
+model: mlp
+image_size: 64
+hidden_dim: 512
+dropout: 0.3
+normalization: dataset
+aug_mode: none
+imbalance_mode: ce
+focal_gamma: 2.0
+epochs: 20
+batch_size: 64
+optimizer: adam
+lr: 0.001
+weight_decay: 0.0001
+scheduler: none
+warmup_epochs: 3
+freeze_bn: false
+curriculum: false
+seed: 42
+num_workers: 2
+

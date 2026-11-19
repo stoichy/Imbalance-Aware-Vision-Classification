@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imbalanced-vision-ablations"
+version = "0.1.0"
+description = "Controlled ablation framework for imbalance-aware image classification across dermatoscopic skin lesions and wild facial expressions."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+    "numpy>=1.26.0",
+    "pandas>=2.2.0",
+    "pillow>=10.0.0",
+    "pyyaml>=6.0.1",
+    "scikit-learn>=1.4.0",
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+    "tensorboard>=2.16.0",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+

@@ -1,0 +1,22 @@
+model: resnet18
+image_size: 224
+pretrained: true
+freeze_bn: true
+freeze_backbone: false
+normalization: imagenet
+aug_mode: combined
+imbalance_mode: weighted_sampler
+focal_gamma: 2.0
+epochs: 15
+batch_size: 32
+optimizer: adam
+lr: 0.001
+backbone_lr: 0.0001
+head_lr: 0.001
+weight_decay: 0.0001
+scheduler: warmup_cosine
+warmup_epochs: 3
+curriculum: false
+seed: 42
+num_workers: 2
+

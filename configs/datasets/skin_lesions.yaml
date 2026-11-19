@@ -1,0 +1,15 @@
+dataset: skin_lesions
+data_root: "${SKIN_DATA_ROOT:-data/skin_lesions}"
+num_classes: 7
+class_names:
+  - akiec
+  - bcc
+  - bkl
+  - df
+  - mel
+  - nv
+  - vasc
+val_ratio: 0.15
+mean: [0.7646, 0.5464, 0.5712]
+std: [0.1410, 0.1532, 0.1706]
+

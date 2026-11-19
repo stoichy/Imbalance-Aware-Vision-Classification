@@ -1,0 +1,288 @@
+seed: 42
+val_ratio: 0.15
+num_workers: 2
+output_dir: outputs
+tensorboard_dir: runs
+assets_dir: assets
+results_dir: results
+
+datasets:
+  skin_lesions:
+    config: configs/datasets/skin_lesions.yaml
+    data_root: "${SKIN_DATA_ROOT:-data/skin_lesions}"
+  facial_expressions:
+    config: configs/datasets/facial_expressions.yaml
+    data_root: "${EXPRESSIONS_DATA_ROOT:-data/facial_expressions}"
+
+suites:
+  mlp_dropout:
+    description: "MLP regularization ablation: with vs. without Dropout(0.3)."
+    runs:
+      - variant: no_dropout
+        model: mlp
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.0
+        normalization: dataset
+        aug_mode: none
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: with_dropout
+        model: mlp
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        normalization: dataset
+        aug_mode: none
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+
+  cnn_batchnorm:
+    description: "4-layer SimpleCNN normalization & global average pooling ablation."
+    runs:
+      - variant: no_batchnorm
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: false
+        use_adaptive_pool: false
+        normalization: dataset
+        aug_mode: none
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: with_batchnorm
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        use_adaptive_pool: false
+        normalization: dataset
+        aug_mode: none
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: with_batchnorm_gap
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        use_adaptive_pool: true
+        normalization: dataset
+        aug_mode: none
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+
+  augmentation:
+    description: "Domain-specific data augmentation ablation on SimpleCNN + BatchNorm."
+    runs:
+      - variant: none
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: none
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: geometric
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: geometric
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: color
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: color
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: combined
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: combined
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+
+  imbalance:
+    description: "Class imbalance mitigation study on augmented SimpleCNN."
+    runs:
+      - variant: standard_ce
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: combined
+        imbalance_mode: ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: weighted_sampler
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: combined
+        imbalance_mode: weighted_sampler
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: weighted_ce
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: combined
+        imbalance_mode: weighted_ce
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: focal_gamma2
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: combined
+        imbalance_mode: focal
+        focal_gamma: 2.0
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+
+  resnet_warmup:
+    description: "ResNet-18 transfer learning with differential LRs, frozen BN, and warmup ablation."
+    runs:
+      - variant: cosine_no_warmup
+        model: resnet18
+        image_size: 224
+        pretrained: true
+        freeze_bn: true
+        normalization: imagenet
+        aug_mode: combined
+        imbalance_mode: weighted_sampler
+        epochs: 15
+        batch_size: 32
+        backbone_lr: 0.0001
+        head_lr: 0.001
+        weight_decay: 0.0001
+        scheduler: cosine
+      - variant: warmup_cosine
+        model: resnet18
+        image_size: 224
+        pretrained: true
+        freeze_bn: true
+        normalization: imagenet
+        aug_mode: combined
+        imbalance_mode: weighted_sampler
+        epochs: 15
+        batch_size: 32
+        backbone_lr: 0.0001
+        head_lr: 0.001
+        weight_decay: 0.0001
+        scheduler: warmup_cosine
+        warmup_epochs: 3
+
+  curriculum:
+    description: "Self-paced curriculum learning ablation over imbalance-aware SimpleCNN."
+    runs:
+      - variant: standard_order
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: combined
+        imbalance_mode: focal
+        focal_gamma: 2.0
+        curriculum: false
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+      - variant: self_paced_curriculum
+        model: cnn
+        image_size: 64
+        hidden_dim: 512
+        dropout: 0.3
+        use_batchnorm: true
+        normalization: dataset
+        aug_mode: combined
+        imbalance_mode: focal
+        focal_gamma: 2.0
+        curriculum: true
+        curriculum_start_frac: 0.3
+        curriculum_step: 0.05
+        epochs: 20
+        batch_size: 64
+        lr: 0.001
+        weight_decay: 0.0001
+        scheduler: none
+
